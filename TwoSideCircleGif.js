@@ -168,3 +168,5 @@ class Renderer {
         gif.create()
     }
  }
+
+module.exports = TwoSideCircleGif.init
