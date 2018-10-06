@@ -1,5 +1,8 @@
 const w = 600, h = 600, nodes = 5
 
+const GifEncoder = require('gifencoder')
+const Canvas = require('canvas')
+
 class State {
     constructor() {
         this.scale = 0
@@ -134,3 +137,34 @@ class Renderer {
         }
     }
 }
+
+ class TwoSideCircleGif {
+    constructor() {
+        this.renderer = new Renderer()
+        this.canvas = new Canvas(w, h)
+        this.encoder = new GifEncoder(w, h)
+        this.context = this.canvas.getContext('2d')
+    }
+
+    initEncoder(fn) {
+        this.encoder.setRepeat(0)
+        this.encoder.setDelay(50)
+        this.encoder.setQuality(100)
+        this.encoder.createReadStream().pipe(require('fs').createWriteStream(fn))
+    }
+
+    create() {
+        this.encoder.start()
+        this.renderer.render(this.context, (ctx) => {
+            this.encoder.addFrame(ctx)
+        }, () => {
+            this.encoder.end()
+        })
+    }
+
+    static init(fn) {
+        const gif = new TwoSideCircleGif()
+        gif.initEncoder(fn)
+        gif.create()
+    }
+ }
