@@ -115,3 +115,22 @@ class TwoSideCircle {
         })
     }
 }
+
+class Renderer {
+    constructor() {
+        this.running = false
+        this.curr = new TwoSideCircle()
+    }
+
+    render(context, cb, endcb) {
+        if (this.running) {
+            context.fillStyle = '#212121'
+            this.curr.draw(context)
+            cb(context)
+            this.curr.update(() => {
+                endcb()
+                this.running = false
+            })
+        }
+    }
+}
